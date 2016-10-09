@@ -11,5 +11,8 @@
     "Tessel"
   ],
   "license": "MIT",
+  "dependencies": {
+    "firebase": "3.4.1"
+  }
   "readme": "A bare bones Tessel 2 blinky script."
 }
