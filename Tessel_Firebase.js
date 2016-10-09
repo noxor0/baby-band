@@ -9,6 +9,6 @@ var myFirebaseRef = new Firebase("https://baby-band.firebaseio.com/");
 
 //Send to firebase
 myFirebaseRef.set({
-    title:"hr",
+    title:"min",
     values:"80"
 });
