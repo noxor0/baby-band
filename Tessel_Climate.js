@@ -1,6 +1,6 @@
 var tessel = require('tessel');
-var climatelib = require('climate-si7020');
-var climate = climatelib.use(tessel.port['A']);
+//var climatelib = require('climate-si7020');
+//var climate = climatelib.use(tessel.port['A']);
 
 climate.on('ready', function() {
     setInterval(function() {
