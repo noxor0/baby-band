@@ -1,0 +1,15 @@
+{
+  "name": "baby-band",
+  "version": "0.0.0",
+  "description": "baby-band set up",
+  "main": "Tessel_BlinkingLights.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://github.com/noxor0/baby-band.git",
+  "keywords": [
+    "Tessel"
+  ],
+  "license": "MIT",
+  "readme": "A bare bones Tessel 2 blinky script."
+}
