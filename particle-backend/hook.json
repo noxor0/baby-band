@@ -1,0 +1,15 @@
+{
+    "event": "test1data",
+    "url": "https://baby-band.firebaseio.com/name/dave/temp.json",
+    "requestType": "POST",
+    "query": {
+        "auth":"wknAHKay65ipORFZZgRF7qJuFFXCMt75GLKpVjPj"
+    },
+    "json": {
+        "temperature":"{{PARTICLE_EVENT_VALUE}}",
+        "event name":"{{PARTICLE_EVENT_NAME}}",
+        "published":"{{PARTICLE_PUBLISHED_AT}}"
+    },
+    "mydevices": true,
+    "noDefaults": true
+}
