@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/activity_main"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tmobile.hackathon.babyband.MainActivity">
+
+    <LinearLayout
+        android:id="@+id/topLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/nameTV"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Dave"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tempatureTV"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nameTV"
+            android:gravity="center"
+            android:text="Temperature: 90 F"
+            android:textColor="@color/bad"
+            android:textSize="30dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/topLL"
+        android:orientation="vertical"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <!--<RelativeLayout-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="fill_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/border">-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/statusTV"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:text="Status: Ok"-->
+                    <!--android:textColor="@color/good"-->
+                    <!--android:textSize="30dp"/>-->
+
+            <!--</RelativeLayout>-->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:weightSum="2"
+                android:orientation="vertical"
+                android:background="@drawable/border">
+
+                <LinearLayout
+                    android:weightSum="2"
+                    android:layout_weight="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.gms.maps.MapView
+                        map:mapType="normal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/mapView" />
+
+                    <!--<ImageView-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_centerHorizontal="true"-->
+                        <!--android:layout_centerVertical="true"-->
+                        <!--android:scaleType="centerInside"-->
+                        <!--android:src="@drawable/pin"/>-->
+
+                    <!--<TextView-->
+                        <!--android:paddingTop="@dimen/activity_vertical_margin"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:id="@+id/locationTV"-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="LT : 0.0, LL : 0.0"-->
+                        <!--android:textSize="20dp"/>-->
+
+                </LinearLayout>
+
+                <!--<LinearLayout-->
+                    <!--android:weightSum="2"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:orientation="vertical">-->
+
+                    <!--<TextView-->
+                        <!--android:textAlignment="center"-->
+                        <!--android:id="@+id/homeTV"-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:layout_height="0dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:textSize="20dp"-->
+                        <!--android:text="Location : \nHome"/>-->
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/homeIcon"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_centerHorizontal="true"-->
+                        <!--android:layout_centerVertical="true"-->
+                        <!--android:scaleType="centerInside"-->
+                        <!--android:src="@drawable/ic_home_black_24dp"/>-->
+                <!--</LinearLayout>-->
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/border">
+
+                <tmobile.hackathon.babyband.HeartRateView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/heartRate"/>
+
+                <TextView
+                    android:id="@+id/heartrateTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Heartrate 80 BPM"
+                    android:textColor="@color/good"
+                    android:textSize="30dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="13dp"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
