@@ -1,4 +1,5 @@
-#Baby Band
+#Baby Band:
+Your baby in our bands.
 
 An original project made to save children's lives from various conditions. Vitals of your child can be monitored by the band and sent to your smart phone. This includes GPS, Heart rate, and environmental temperature.
 
