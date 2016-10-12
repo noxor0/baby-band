@@ -5,7 +5,7 @@ An original project made to save children's lives from various conditions. Vital
 Made as a project at the 10.8 - 10.9 T-Mobile IoT hackathon. Finalist at Seattle Interacitve Confrence 2016. 
 
 Made by:
-
+<b>
   Connor Cox 
   
   Garret Lahmann
@@ -13,6 +13,6 @@ Made by:
   Todd Crane
   
   William Zulueta
-  
+ </b>
   
   Don't steal idea please.
