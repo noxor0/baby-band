@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "759633044170",
+    "firebase_url": "https://baby-band.firebaseio.com",
+    "project_id": "baby-band",
+    "storage_bucket": "baby-band.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759633044170:android:5f46a042c8e25624",
+        "android_client_info": {
+          "package_name": "tmobile.hackathon.babyband"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759633044170-8cuf0umbfqo1foenqmfm0rf7ji5np1vu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDULg_JNK-4fLXPwu-vPbGdEZPgy2kd-s8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
