@@ -29,8 +29,6 @@ board.on('ready', function(){
   });
 
   temperature.on('data', function(err, data){
-    console.log(this.raw);
-    console.log(err);
     console.log(this.celsius + "°C", this.fahrenheit + "°F");
     console.log(data);
     fahrenheitGraph.update(this.fahrenheit); //Should use data.fahrenheit
