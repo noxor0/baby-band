@@ -22,6 +22,7 @@ public class Profile
     private String location;
     private double lat;
     private double lon;
+    private boolean isConnected = false;
 
     private boolean initLat = false;
     private boolean initLong = false;
@@ -50,14 +51,12 @@ public class Profile
 
     public void registerListeners()
     {
-        database.child("name").child(name).child("temper").addValueEventListener(new ValueEventListener()
+        database.child("name").child(name).child("connected").addValueEventListener(new ValueEventListener()
         {
-            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
-                Double loc = (Double) dataSnapshot.getValue();
-                temp = loc;
+                isConnected = (Boolean) dataSnapshot.getValue();
             }
 
             @Override
@@ -66,6 +65,40 @@ public class Profile
 
             }
         });
+
+        database.child("name").child("jill").child("temp").child("temperature").addValueEventListener(new ValueEventListener()
+        {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                String loc = (String) dataSnapshot.getValue();
+                temp = Double.parseDouble(loc);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+
+            }
+        });
+
+        //        database.child("name").child(name).child("temper").addValueEventListener(new ValueEventListener()
+        //        {
+        //            @RequiresApi(api = Build.VERSION_CODES.M)
+        //            @Override
+        //            public void onDataChange(DataSnapshot dataSnapshot)
+        //            {
+        //                Double loc = (Double) dataSnapshot.getValue();
+        //                temp = loc;
+        //            }
+        //
+        //            @Override
+        //            public void onCancelled(DatabaseError databaseError)
+        //            {
+        //
+        //            }
+        //        });
 
         database.child("name").child(name).child("loc").addValueEventListener(new ValueEventListener()
         {
@@ -83,14 +116,14 @@ public class Profile
 
             }
         });
-        database.child("name").child(name).child("hr").addValueEventListener(new ValueEventListener()
+        database.child("name").child("jill").child("BPM").child("BPM").addValueEventListener(new ValueEventListener()
         {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
-                Long ll = (Long) dataSnapshot.getValue();
-                lastHeartRate = ll.intValue();
+                String ll = (String) dataSnapshot.getValue();
+                lastHeartRate = Integer.parseInt(ll);
             }
 
             @Override
@@ -160,5 +193,10 @@ public class Profile
     public double getTemp()
     {
         return temp;
+    }
+
+    public boolean isConnected()
+    {
+        return isConnected;
     }
 }

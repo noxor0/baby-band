@@ -7,4 +7,6 @@
     <color name="good">#02ff01</color>
     <color name="black">#021586</color>
     <color name="grey">#9095ae</color>
+    <color name="background_grey">#fafafa</color>
+    <color name="baby_blue">#00efeb</color>
 </resources>
