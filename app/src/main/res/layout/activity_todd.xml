@@ -214,9 +214,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="8dp"
-                    android:text="Safeway"
+                    android:text="Seattle Conference Center"
                     android:textColor="@color/white"
-                    android:textSize="30dp"
+                    android:textSize="20dp"
                     android:textStyle="bold"/>
 
             </LinearLayout>

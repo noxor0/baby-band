@@ -66,22 +66,22 @@ public class Profile
             }
         });
 
-        database.child("name").child("jill").child("temp").child("temperature").addValueEventListener(new ValueEventListener()
-        {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                String loc = (String) dataSnapshot.getValue();
-                temp = Double.parseDouble(loc);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
-
-            }
-        });
+//        database.child("name").child("jill").child("temp").child("temperature").addValueEventListener(new ValueEventListener()
+//        {
+//            @RequiresApi(api = Build.VERSION_CODES.M)
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot)
+//            {
+//                String loc = (String) dataSnapshot.getValue();
+//                temp = Double.parseDouble(loc);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError)
+//            {
+//
+//            }
+//        });
 
         //        database.child("name").child(name).child("temper").addValueEventListener(new ValueEventListener()
         //        {
@@ -116,14 +116,18 @@ public class Profile
 
             }
         });
-        database.child("name").child("jill").child("BPM").child("BPM").addValueEventListener(new ValueEventListener()
+        //74.30,42
+        database.child("Emma").child("SensorData").addValueEventListener(new ValueEventListener()
         {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
-                String ll = (String) dataSnapshot.getValue();
-                lastHeartRate = Integer.parseInt(ll);
+                String data = (String) dataSnapshot.getValue();
+                String temperature = data.substring(0, data.indexOf(","));
+                String BPM = data.substring(data.indexOf(",") + 1);
+                temp = Double.parseDouble(temperature);
+                lastHeartRate = Integer.parseInt(BPM);
             }
 
             @Override

@@ -34,6 +34,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
@@ -55,6 +56,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private MediaPlayer mediaPlayer;
     private TextView tempatureTextView;
     private TextView devicesTextView;
+    private TextView locationTextView;
     private ImageView locationImageView;
     private TextView nameTV;
     private TextView heartRateTextView;
@@ -76,6 +78,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     //    private MapView mapView;
     private boolean inAlarm = false;
     private boolean sendNot = false;
+    private Place currentPlace;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -91,6 +94,8 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         {
             getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_red)));
             getActionBar().setTitle("Emma");
+            getActionBar().setHomeAsUpIndicator(R.drawable.drawer);
+            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
         //        mapView = (MapView) findViewById(R.id.mapView);
         //        mapView.onCreate(savedInstanceState);
@@ -112,6 +117,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         tempatureTextView = (TextView) findViewById(R.id.tempatureTV);
         heartRateTextView = (TextView) findViewById(R.id.heartrateTV);
         devicesTextView = (TextView) findViewById(R.id.devicesTextView);
+        locationTextView = (TextView) findViewById(R.id.locationTextView);
         locationImageView = (ImageView) findViewById(R.id.locationImage);
         locationImageView.setOnClickListener(new View.OnClickListener()
         {
@@ -134,11 +140,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                     @Override
                     public void run()
                     {
-                        //                        if (!profile.isConnected())
-                        //                        {
-                        //                            watchImageView.setImageResource(R.drawable.watch_off);
-                        //                            return;
-                        //                        }
+                        if (!profile.isConnected())
+                        {
+                            return;
+                        }
                         //                        watchImageView.setImageResource(R.drawable.watch_on);
                         //                        temperatureView.invalidate();
                         hrv.invalidate();
@@ -176,10 +181,17 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             public void onResult(@NonNull PlaceLikelihoodBuffer placeLikelihoods)
             {
                 Log.i("MainActivity", "status : " + placeLikelihoods.getStatus());
-                Log.i("MainActivity", "pl : " + placeLikelihoods.toString());
+                float highest = -1f;
                 for (PlaceLikelihood pl : placeLikelihoods)
                 {
                     Log.i("MainActivity", "Places name : " + pl.getPlace().getName());
+                    Log.i("MainActivity", "ll : " + pl.getLikelihood());
+                    if (pl.getLikelihood() > highest)
+                    {
+                        Log.i("MainActivity", "new high");
+                        highest = pl.getLikelihood();
+                        locationTextView.setText(pl.getPlace().getName());
+                    }
                 }
             }
         });
@@ -215,7 +227,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     public void test()
     {
         Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        v.vibrate(5000);
+        v.vibrate(2000);
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sound);
         mediaPlayer.start();
         handler.postDelayed(new Runnable()
@@ -223,9 +235,11 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             @Override
             public void run()
             {
+                mediaPlayer.stop();
                 inAlarm = false;
             }
         }, 5000);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -252,18 +266,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
         Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         v.vibrate(miliseconds);
-    }
-
-    public void updateHome(String loc)
-    {
-        if (loc.equals("house"))
-        {
-            //            homeIcon.setImageResource(R.drawable.ic_home_black_24dp);
-        } else if (loc.equals("car"))
-        {
-            //            homeIcon.setImageResource(R.drawable.ic_directions_car_black_24dp);
-        }
-        //        homeTV.setText("Location : " + loc);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -312,41 +314,22 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         //        locationTextView.setText("LT : " + lastLTVal + " LL : " + lon);
     }
 
-    public void launchDaveActivity()
-    {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.putExtra("profile", true);
-        startActivity(intent);
-        finish();
-    }
-
-    public void launchJillActivity()
-    {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.putExtra("profile", false);
-        startActivity(intent);
-        finish();
-    }
-
     @Override
     public final void onResume()
     {
         super.onResume();
-        //        mapView.onResume();
     }
 
     @Override
     public final void onDestroy()
     {
         super.onDestroy();
-        //        mapView.onDestroy();
     }
 
     @Override
     public final void onLowMemory()
     {
         super.onLowMemory();
-        //        mapView.onLowMemory();
     }
 
     //    @Override
@@ -463,6 +446,15 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             text = null;
             text = new StringBuilder();
 
+            if (id.equals("577ae0fc-ca17-37f4-8ec5-5884a5941d0f"))
+            {
+                inCar = true;
+                inAlarm = false;
+            }
+
+            if (inAlarm)
+                return;
+
             boolean found = false;
             for (int i = devices.size() - 1; i > 0; --i)
             {
@@ -472,6 +464,15 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                 if (bd.getAmount() > 15)
                 {
                     devices.remove(bd);
+                    if (bd.getName().equals("Stacey's Model S"))
+                    {
+                        sendNotification("Don't leave your baby!");
+                        inAlarm = true;
+                        test();
+                        inCar = false;
+                        devicesTextView.setText("Stacey's Model S");
+                        return;
+                    }
                 }
 
                 if (bd.getAddr().equals(id))
@@ -479,8 +480,17 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                     bd.reset();
                     found = true;
                 }
+
                 if (!bd.getName().equals("null"))
-                    text.append(bd.getName() + ", ");
+                {
+                    if (text.length() > 0)
+                    {
+                        text.append(", " + bd.getName());
+                    } else
+                    {
+                        text.append(bd.getName());
+                    }
+                }
 
             }
             if (!found)
@@ -492,16 +502,16 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             devicesTextView.setText(text.toString());
 
 
-            if (id.contains("a85568e7-e011-3134-bbba-0a564f8130ea") && !inAlarm)
-            {
-                Log.i("Bluetooth", "rssi : " + rssi);
-                if (rssi < -90)
-                {
-                    sendNotification("Don't leave your baby!");
-                    inAlarm = true;
-                    test();
-                }
-            }
+            //            if (id.contains("a85568e7-e011-3134-bbba-0a564f8130ea") && !inAlarm)
+            //            {
+            //                Log.i("Bluetooth", "rssi : " + rssi);
+            //                if (rssi < -95 && inCar)
+            //                {
+            //                    sendNotification("Don't leave your baby!");
+            //                    inAlarm = true;
+            //                    test();
+            //                }
+            //            }
         }
     }
 }

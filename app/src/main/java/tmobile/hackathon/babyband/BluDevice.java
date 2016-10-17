@@ -39,9 +39,9 @@ public class BluDevice
         switch (addr)
         {
             case "577ae0fc-ca17-37f4-8ec5-5884a5941d0f":
-                return "Tesla Model S";
+                return "Stacey's Model S";
             case "a85568e7-e011-3134-bbba-0a564f8130ea":
-                return "William's Nexus 6P";
+                return "Dad's 6P";
             default:
                 return "null";
         }
