@@ -39,7 +39,7 @@ public class HeartRateView extends View
         drawPaint.setColor(Color.GREEN);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeWidth(10);
-        backgroundPaint.setColor(ContextCompat.getColor(context, R.color.background_grey));
+        backgroundPaint.setColor(ContextCompat.getColor(context, R.color.background_dark_blue));
 //        backgroundPaint.setColor(Color.BLACK);
     }
 
@@ -48,7 +48,7 @@ public class HeartRateView extends View
     {
         super.onDraw(canvas);
         canvas.drawRect(15, 15, getWidth() - 15, getHeight() - 15, backgroundPaint);
-        currentPoint = new Point((getWidth() / 2) - 200, getHeight() / 2 + profile.getHeartRate() + 15);
+        currentPoint = new Point((getWidth() / 2) - 250, getHeight() / 2 - profile.getHeartRate() + 15);
         Path path = new Path();
         path.moveTo(currentPoint.x, currentPoint.y);
 
