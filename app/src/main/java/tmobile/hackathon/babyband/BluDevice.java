@@ -11,12 +11,17 @@ public class BluDevice
 
     public BluDevice(String a)
     {
-        this.addr = addr;
+        this.addr = a;
     }
 
     public String getAddr()
     {
         return addr;
+    }
+
+    public void reset()
+    {
+        amount = 0;
     }
 
     public int getAmount()
@@ -34,7 +39,9 @@ public class BluDevice
         switch (addr)
         {
             case "577ae0fc-ca17-37f4-8ec5-5884a5941d0f":
-                return "Williams Iphone";
+                return "Tesla Model S";
+            case "a85568e7-e011-3134-bbba-0a564f8130ea":
+                return "William's Nexus 6P";
             default:
                 return "null";
         }

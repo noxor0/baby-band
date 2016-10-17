@@ -1,6 +1,9 @@
 package tmobile.hackathon.babyband;
 
 import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -9,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +24,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,14 +54,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private boolean connectionStatus = false;
     private MediaPlayer mediaPlayer;
     private TextView tempatureTextView;
-    private ImageView watchImageView;
     private TextView devicesTextView;
-    //    private TextView statusTextView;
-    //    private TextView locationTextView;
+    private ImageView locationImageView;
     private TextView nameTV;
     private TextView heartRateTextView;
-    //    private TextView homeTV;
-    //    private ImageView homeIcon;
     private DatabaseReference database;
     private double lastLLVal = 0;
     private double lastLTVal = 0;
@@ -74,6 +75,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private boolean loaded = false;
     //    private MapView mapView;
     private boolean inAlarm = false;
+    private boolean sendNot = false;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -109,6 +111,16 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         //        nameTV = (TextView) findViewById(R.id.nameTV);
         tempatureTextView = (TextView) findViewById(R.id.tempatureTV);
         heartRateTextView = (TextView) findViewById(R.id.heartrateTV);
+        devicesTextView = (TextView) findViewById(R.id.devicesTextView);
+        locationImageView = (ImageView) findViewById(R.id.locationImage);
+        locationImageView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                launchGoogleMaps();
+            }
+        });
 
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask()
@@ -163,6 +175,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             @Override
             public void onResult(@NonNull PlaceLikelihoodBuffer placeLikelihoods)
             {
+                Log.i("MainActivity", "status : " + placeLikelihoods.getStatus());
                 Log.i("MainActivity", "pl : " + placeLikelihoods.toString());
                 for (PlaceLikelihood pl : placeLikelihoods)
                 {
@@ -181,12 +194,38 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         //        mapView.onPause();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void sendNotification(String text)
+    {
+        if (sendNot)
+            return;
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        // build notification
+        // the addAction re-use the same intent to keep the example short
+        Notification n = new Notification.Builder(this).setContentTitle("Babyband").setContentText(text).setSmallIcon(R.drawable.heart).setContentIntent(pIntent).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH).build();
+        n.defaults = Notification.DEFAULT_ALL;
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
+        sendNot = true;
+    }
+
     public void test()
     {
         Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         v.vibrate(5000);
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sound);
         mediaPlayer.start();
+        handler.postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                inAlarm = false;
+            }
+        }, 5000);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -232,36 +271,25 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     {
         if (temp > 85)//LOCATION TAGS
         {
+            sendNotification("Overheating " + temp + "F");
             test();
-            //            tempatureTextView.setTextColor(getColor(R.color.bad));
         } else
         {
             //            tempatureTextView.setTextColor(getColor(R.color.good));
         }
-        tempatureTextView.setText("" + temp);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void updateStatus(boolean ok)
-    {
-        if (!ok)
-        {
-            //            statusTextView.setTextColor(getColor(R.color.bad));
-            //            sendNotification();
-            vibrate(5000);
-        } else
-        {
-            if (mediaPlayer != null)
-                mediaPlayer.stop();
-            //            statusTextView.setTextColor(getColor(R.color.good));
-        }
-        //        statusTextView.setText("Status : " + ((ok) ? "Ok" : "Bad"));
+        tempatureTextView.setText("" + (int) temp);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void updateHeartrate(int heartrate)
     {
-        //        if (heartrate > 120 || heartrate < 30)
+        if (heartrate > 200)
+        {
+            sendNotification("Elevated Heartrate " + heartrate + "BPM");
+        } else if (heartrate < 30)
+        {
+            sendNotification("Decreased Heartrate " + heartrate + "BPM");
+        }
         //        {
         //            heartRateTextView.setTextColor(getColor(R.color.bad));
         //            test();
@@ -396,6 +424,15 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         //        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
     }
 
+    private void launchGoogleMaps()
+    {
+        String format = "geo:0,0?q=" + Double.toString(profile.getLat()) + "," + Double.toString(profile.getLon()) + "(" + "Baby" + ")";
+        Uri uri = Uri.parse(format);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
     public void displayDevices()
     {
 
@@ -407,6 +444,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         private List<ParcelUuid> uuids;
         private AdvertiseData data;
         private String id;
+        private StringBuilder text;
 
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
@@ -416,53 +454,54 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                     fromString(UUID.nameUUIDFromBytes(scanRecord).toString())).build();
             uuids = data.getServiceUuids();
             id = uuids.get(0).getUuid().toString();
-            //            StringBuilder s = new StringBuilder();
-            //            for (byte b : scanRecord)
-            //            {//577ae0fc-ca17-37f4-8ec5-5884a5941d0f
-            //                s.append(String.format("%02x", b));
-            //            }
-            Log.i("Bluetooth", "Device : " + id);
-            //        Log.i("Bluetooth", "Name : " + device.getName());
+
+            if (id == null)
+                return;
 
             Log.i("Bluetooth", "name : " + device.getName() + " " + id);
 
+            text = null;
+            text = new StringBuilder();
+
             boolean found = false;
-            for (int i = devices.size(); i > 0; ++i)
+            for (int i = devices.size() - 1; i > 0; --i)
             {
                 BluDevice bd = devices.get(i);
                 bd.increaseAmount();
-                if (bd.getAmount() > 100)
+
+                if (bd.getAmount() > 15)
                 {
-                    devices.remove(device);
+                    devices.remove(bd);
                 }
-                if (bd.getAddr().contains(id))
+
+                if (bd.getAddr().equals(id))
                 {
+                    bd.reset();
                     found = true;
-                    break;
                 }
+                if (!bd.getName().equals("null"))
+                    text.append(bd.getName() + ", ");
+
             }
             if (!found)
             {
+                Log.i("Bluetooth", "Adding : " + id);
                 devices.add(new BluDevice(id));
             }
 
+            devicesTextView.setText(text.toString());
 
-            //            if (id.contains("a85568e7-e011-3134-bbba-0a564f8130ea") && !inAlarm)
-            //            {
-            //                Log.i("Bluetooth", "rssi : " + rssi);
-            //                inCar = true;
-            //                if (inCar && rssi < -80)
-            //                {
-            ////                    inAlarm = true;
-            //                    Log.i("Bluetooth", "Addr : " + device.getAddress());
-            //                    Log.i("Bluetooth", "Name : " + device.getName());
-            //                    Log.i("Bluetooth", "UUID" + device.getUuids());
-            //                    Log.i("Bluetooth", "Type : " + device.getType());
-            //                    Log.i("Bluetooth", "SOMETHING HAPPEND : " + rssi);
-            //                    updateStatus(false);
-            ////                    test();
-            //                }
-            //            }
+
+            if (id.contains("a85568e7-e011-3134-bbba-0a564f8130ea") && !inAlarm)
+            {
+                Log.i("Bluetooth", "rssi : " + rssi);
+                if (rssi < -90)
+                {
+                    sendNotification("Don't leave your baby!");
+                    inAlarm = true;
+                    test();
+                }
+            }
         }
     }
 }

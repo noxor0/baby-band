@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -48,7 +49,8 @@ public class HeartRateView extends View
     {
         super.onDraw(canvas);
         canvas.drawRect(15, 15, getWidth() - 15, getHeight() - 15, backgroundPaint);
-        currentPoint = new Point((getWidth() / 2) - 250, getHeight() / 2 - profile.getHeartRate() + 15);
+        canvas.drawBitmap(((BitmapDrawable)getResources().getDrawable(R.drawable.heart)).getBitmap(), 60, 80, drawPaint);
+        currentPoint = new Point((getWidth() / 2) - 250, (getHeight() / 2 + 150) - profile.getHeartRate());
         Path path = new Path();
         path.moveTo(currentPoint.x, currentPoint.y);
 
