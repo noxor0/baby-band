@@ -2,6 +2,7 @@
 #include "DS18B20/DS18B20.h"
 #include "DS18B20/Particle-OneWire.h"
 #include "Particle.h"
+#include "PulseSensor_Spark/SparkIntervalTimer.h"
 
 //Varible setup 
 DS18B20 ds18b20 = DS18B20(D6); //Sets Pin D2 for Water Temp Sensor
@@ -17,7 +18,7 @@ int DS18B20_SAMPLE_INTERVAL = 2500;
 int dsAttempts = 0;
 
 void interruptSetup(void);
-extern volatile int BPM;;
+extern volatile int BPM;
 
 //Choose webhook
 const char *PUBLISH_EVENT_NAME = "FB-Sensors";
@@ -28,33 +29,34 @@ void setup() {
     pinMode(D2, INPUT);
     Serial.begin(115200);
     interruptSetup();
-    
+    interrupts();
 }
 
 void loop() {
-if (millis() > DS18B20nextSampleTime){
-  getTemp();
-  }
-  if (millis() > MetricnextPublishTime){
-    Serial.println("Publishing now.");
-    publishData();
-  }
+    if (millis() > DS18B20nextSampleTime){
+        interrupts();
+        getTemp();
+        noInterrupts();
+    }
+    if (millis() > MetricnextPublishTime){
+        Serial.println("Publishing now.");
+        publishData();
+    }
 }
 
 
 void publishData(){
-  if(!ds18b20.crcCheck()){
-    return;
-  }
-  char tempArr[64];
-  sprintf(tempArr, "%d", BPM);
-
-  sprintf(szInfo, "%2.2f", fahrenheit);
-  strcat(szInfo, ",30");
-  //publish temp
-  Particle.publish(PUBLISH_EVENT_NAME, szInfo, PRIVATE);
-  //set time
-  MetricnextPublishTime = millis() + Metric_Publish_Rate;
+    if(!ds18b20.crcCheck()){
+        return;
+    }
+    char tempArr[64];
+    sprintf(tempArr, ",%d", BPM);
+    sprintf(szInfo, "%2.2f", fahrenheit);
+    strcat(szInfo, tempArr);
+    //publish temp
+    Particle.publish(PUBLISH_EVENT_NAME, szInfo, PRIVATE);
+    //set time
+    MetricnextPublishTime = millis() + Metric_Publish_Rate;
 }
 
 void getTemp(){
