@@ -160,16 +160,14 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             }
         }, 1000, 1000);
 
-        manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-        adapter = manager.getAdapter();
-        adapter.startDiscovery();
-        adapter.startLeScan(scanner);
+
 
         devices = new ArrayList<>();
     }
 
     private void setUpPlaces()
     {
+//        ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             return;
@@ -214,14 +212,21 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        // build notification
-        // the addAction re-use the same intent to keep the example short
         Notification n = new Notification.Builder(this).setContentTitle("Babyband").setContentText(text).setSmallIcon(R.drawable.heart).setContentIntent(pIntent).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH).build();
         n.defaults = Notification.DEFAULT_ALL;
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, n);
         sendNot = true;
+
+        handler.postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                sendNot = false;
+            }
+        }, 10000);
     }
 
     public void test()
